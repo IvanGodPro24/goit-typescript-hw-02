@@ -1,1 +1,1 @@
-# goit-react-hw-04
+# goit-typescript-hw-02
