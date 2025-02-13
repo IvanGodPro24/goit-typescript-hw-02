@@ -1,0 +1,17 @@
+.header {
+    padding: 1rem;
+    border-bottom: 1px solid #fff;
+}
+
+.form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.input {
+    min-width: 300px;
+    border-radius: 5px;
+    border-color: transparent;
+    padding: 10px;
+}
