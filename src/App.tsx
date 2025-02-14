@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import ImageGallery from "./components/ImageGallery/ImageGallery";
 import SearchBar from "./components/SearchBar/SearchBar";
@@ -8,19 +8,27 @@ import ErrorMessage from "./components/ErrorMessage/ErrorMessage";
 import { Toaster, toast } from "react-hot-toast";
 import LoadMoreBtn from "./components/LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "./components/ImageModal/ImageModal";
+import {
+  ImagePreviewProps,
+  ImageProps,
+} from "./components/ImageGallery/ImageGallery.types";
 
 function App() {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<ImageProps[]>([]);
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState(false);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<ImagePreviewProps | null>(
+    null
+  );
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     if (!query) return;
+
+    const controller = new AbortController();
 
     const fetchData = async () => {
       try {
@@ -44,17 +52,19 @@ function App() {
 
         setHasMore(data.length > 0);
       } catch (error) {
-        console.error(error);
-        setError(true);
+        if (error instanceof Error && error.name !== "AbortError") {
+          setError(true);
+        }
       } finally {
         setLoader(false);
       }
     };
 
     fetchData();
+    return () => controller.abort();
   }, [query, page]);
 
-  const handleSearch = (newQuery) => {
+  const handleSearch = (newQuery: string) => {
     if (newQuery === query) return;
     setQuery(newQuery);
     setPage(1);
@@ -62,11 +72,9 @@ function App() {
     setError(false);
   };
 
-  const nextPage = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
+  const nextPage = useCallback(() => setPage((prevPage) => prevPage + 1), []);
 
-  function openModal(image) {
+  function openModal(image: ImagePreviewProps) {
     setSelectedImage(image);
     setIsOpen(true);
   }
@@ -81,12 +89,9 @@ function App() {
       <div>
         <Toaster />
       </div>
-      <SearchBar onSubmit={handleSearch}></SearchBar>
+      <SearchBar onSubmit={handleSearch} />
       {images.length > 0 && (
-        <ImageGallery
-          images={images}
-          onClick={(image) => openModal(image)}
-        ></ImageGallery>
+        <ImageGallery images={images} onClick={(image) => openModal(image)} />
       )}
       {loader && <Loader />}
       {error && <ErrorMessage />}

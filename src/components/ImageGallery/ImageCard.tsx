@@ -1,7 +1,8 @@
 import css from "./ImageCard.module.css";
 import { FcLike } from "react-icons/fc";
+import { ImageCardProps } from "./ImageCard.types";
 
-const ImageCard = ({ card, description, likes, onClick }) => {
+const ImageCard = ({ card, description, likes, onClick }: ImageCardProps) => {
   return (
     <div>
       <img

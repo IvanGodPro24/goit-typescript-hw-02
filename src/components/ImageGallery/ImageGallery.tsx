@@ -1,7 +1,8 @@
 import ImageCard from "./ImageCard";
 import css from "./ImageGallery.module.css";
+import { ImageGalleryProps } from "./ImageGallery.types";
 
-const ImageGallery = ({ images, onClick }) => {
+const ImageGallery = ({ images, onClick }: ImageGalleryProps) => {
   return (
     <ul className={css.list}>
       {images.map(
@@ -18,7 +19,7 @@ const ImageGallery = ({ images, onClick }) => {
               description={alt_description}
               likes={likes}
               onClick={() => onClick({ regular, alt_description, name })}
-            ></ImageCard>
+            />
           </li>
         )
       )}
